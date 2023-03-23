@@ -6,8 +6,8 @@ local CustomHandler = {
 function CustomHandler:access(config)
     kong.log("access")
     kong.log.inspect(config)
-    kong.service.request.set_header("Finno-Message", config.message)
-    kong.response.set_header("Finno-Message", config.message)
+    kong.service.request.set_header("X-Message", config.message)
+    kong.response.set_header("X-Message", config.message)
 end
 
 return CustomHandler
