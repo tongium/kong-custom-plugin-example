@@ -1,0 +1,37 @@
+version: "3.9"
+services:
+  kong:
+    container_name: kong
+    image: kong
+    environment:
+      KONG_DATABASE: "off"
+      KONG_PROXY_ACCESS_LOG: /dev/stdout
+      KONG_ADMIN_ACCESS_LOG: /dev/stdout
+      KONG_PROXY_ERROR_LOG: /dev/stderr
+      KONG_ADMIN_ERROR_LOG: /dev/stderr
+      KONG_LOG_LEVEL: debug
+      KONG_DECLARATIVE_CONFIG: /usr/local/kong/declarative/kong.yml
+      KONG_ADMIN_LISTEN: 0.0.0.0:8001, 0.0.0.0:8444 ssl
+      KONG_PROXY_LISTEN: 0.0.0.0:8000, 0.0.0.0:8443 ssl, 0.0.0.0:9080 http2, 0.0.0.0:9081 http2 ssl
+      KONG_PLUGINS: bundled,example
+      KONG_LUA_PACKAGE_PATH: /opt/?.lua;/opt/?/init.lua;;
+    healthcheck:
+      test: [ "CMD", "kong", "health" ]
+      interval: 120s
+      timeout: 10s
+      retries: 3
+    volumes:
+      - ./kong.yml:/usr/local/kong/declarative/kong.yml
+      - ./plugins:/opt/kong/plugins
+    ports:
+      - "8001:8001"
+      - "8444:8444"
+      - "8000:8000"
+      - "8443:8443"
+      - "9080:9080"
+      - "9081:9081"
+  http-echo:
+    container_name: http-echo
+    image: mendhak/http-https-echo:28
+    ports:
+      - "8080:8080"
