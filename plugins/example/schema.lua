@@ -1,3 +1,5 @@
+-- https://docs.konghq.com/gateway/latest/plugin-development/configuration/
+
 return {
   name = "example",
   fields = {
